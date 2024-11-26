@@ -10,7 +10,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        writeFile("file1", readFile("file"));
+        List<String> lines = readFile("trackLog-2024-нояб.-23_07-22-08.csv");
+        removeHeaderFailLines(lines);
+        writeFile("file1", lines);
     }
 
     public static List<String> readFile(String fileName) throws IOException {
@@ -47,5 +49,9 @@ public class Main {
             case "дек." -> "12";
             default -> throw new IllegalStateException("Unexpected value: " + month);
         };
+    }
+
+    public static void removeHeaderFailLines(List<String> lines) {
+        lines.removeIf(s -> s.chars().filter(c -> c == '-').count() > 4);
     }
 }
