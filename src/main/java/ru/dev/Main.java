@@ -2,29 +2,66 @@ package ru.dev;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     public static List<String> logs;
     public static String header;
 
     public static void main(String[] args) throws IOException {
-        String fileName = "trackLog-2024-нояб.-23_07-22-08.csv";
-        logs = readFile(fileName);
-        removeHeaderFailLines(logs);
-        logs = removeLogWhenStop(logs);
-        logs = replaceInvalid(logs);
-        logs = replaceMonth(logs);
+        String inDir;
+        String outDir;
+        if (args.length == 0) {
+            inDir = ".";
+            outDir = "./result";
+        } else if (args.length == 1) {
+            inDir = args[0];
+            outDir = "./result";
+        } else {
+            inDir = args[0];
+            outDir = args[1];
+        }
+        String fileName = "trackLog-2024-10-23_07-22-08.csv";
+        String trackLogRegex = "^trackLog-\\d{4}-.{0,7}-\\d{2}_\\d{2}-\\d{2}-\\d{2}\\.csv$";
+        System.out.println(fileName.matches(trackLogRegex));
 
-        String month = fileName.split("-")[2];
-        String monthNumber = monthToNumber(month);
-        String outputFileName = fileName.replaceFirst(month, monthNumber);
-        writeFile(outputFileName, logs);
+
+//        Set<String> files = getFileNames(inDir);
+
+//        getFileNames(inDir).forEach(System.out::println);
+
+//        String fileName = "trackLog-2024-нояб.-23_07-22-08.csv";
+//        logs = readFile(fileName);
+//        removeHeaderFailLines(logs);
+//        logs = removeLogWhenStop(logs);
+//        logs = replaceInvalid(logs);
+//        logs = replaceMonth(logs);
+//
+//        String month = fileName.split("-")[2];
+//        String monthNumber = monthToNumber(month);
+//        String outputFileName = fileName.replaceFirst(month, monthNumber);
+//        writeFile(outputFileName, logs);
+    }
+
+    public static Set<String> getFileNames(String dir) throws IOException {
+        try (Stream<Path> stream = Files.list(Paths.get(dir))) {
+            return stream
+                    .filter(file -> !Files.isDirectory(file))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
+        }
     }
 
     public static List<String> readFile(String fileName) throws IOException {
