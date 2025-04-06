@@ -12,8 +12,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,12 +39,13 @@ public class Main {
         Set<String> files = getFileNames(inDir);
         if (files == null || files.isEmpty())       return;
         String trackLogRegex = "^trackLog-\\d{4}-.{0,7}-\\d{2}_\\d{2}-\\d{2}-\\d{2}\\.csv$";
-        Deque<String> trackLogFiles = new ArrayDeque<>();
+        ConcurrentLinkedQueue<String> trackLogFiles = new ConcurrentLinkedQueue<>();
         for (String file : files) {
             if (file.matches(trackLogRegex))
-                trackLogFiles.addLast(file);
+                trackLogFiles.add(file);
         }
         System.out.println(trackLogFiles);
+        System.out.println(Runtime.getRuntime().availableProcessors());
 
 //        getFileNames(inDir).forEach(System.out::println);
 
