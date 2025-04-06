@@ -2,15 +2,17 @@ package ru.dev;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,12 +34,17 @@ public class Main {
             inDir = args[0];
             outDir = args[1];
         }
-        String fileName = "trackLog-2024-10-23_07-22-08.csv";
+//        String fileName = "trackLog-2024-10-23_07-22-08.csv";
+
+        Set<String> files = getFileNames(inDir);
+        if (files == null || files.isEmpty())       return;
         String trackLogRegex = "^trackLog-\\d{4}-.{0,7}-\\d{2}_\\d{2}-\\d{2}-\\d{2}\\.csv$";
-        System.out.println(fileName.matches(trackLogRegex));
-
-
-//        Set<String> files = getFileNames(inDir);
+        Deque<String> trackLogFiles = new ArrayDeque<>();
+        for (String file : files) {
+            if (file.matches(trackLogRegex))
+                trackLogFiles.addLast(file);
+        }
+        System.out.println(trackLogFiles);
 
 //        getFileNames(inDir).forEach(System.out::println);
 
