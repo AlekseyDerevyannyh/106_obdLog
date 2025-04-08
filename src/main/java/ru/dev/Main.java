@@ -2,6 +2,7 @@ package ru.dev;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +18,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         String inDir;
         String outDir;
+        String separator = FileSystems.getDefault().getSeparator();
         if (args.length == 0) {
             inDir = ".";
             outDir = "./result";
@@ -48,7 +50,7 @@ public class Main {
         ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         String fileName;
         while ((fileName = trackLogFiles.poll()) != null) {
-            executor.execute(new TrackLogConverter(fileName, inDir, outDir));
+            executor.execute(new TrackLogConverter(fileName, inDir, outDir, separator));
         }
         executor.shutdown();
     }

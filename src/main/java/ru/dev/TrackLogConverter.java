@@ -13,13 +13,15 @@ public class TrackLogConverter implements Runnable {
     private final String fileName;
     private final String inDir;
     private final String outDir;
+    private final String separator;
     private String header;
     private List<String> lines = new ArrayList<>();
 
-    public TrackLogConverter(String fileName, String inDir, String outDir) {
+    public TrackLogConverter(String fileName, String inDir, String outDir, String separator) {
         this.fileName = fileName;
         this.inDir = inDir;
         this.outDir = outDir;
+        this.separator = separator;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class TrackLogConverter implements Runnable {
     }
 
     private void readFile() throws IOException {
-        String fileName = this.inDir + "/" + this.fileName;
+        String fileName = this.inDir + this.separator + this.fileName;
         try (BufferedReader fileReader = new BufferedReader(new FileReader(fileName))) {
             if (fileReader.ready()) {
                 this.header = fileReader.readLine();
@@ -133,7 +135,7 @@ public class TrackLogConverter implements Runnable {
         } else {
             outFileName = this.fileName;
         }
-        return outDir + "/" + outFileName;
+        return outDir + this.separator + outFileName;
     }
 
     private void writeFile() throws IOException {
