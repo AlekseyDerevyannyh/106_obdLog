@@ -36,7 +36,7 @@ public class TrackLogConverter implements Runnable {
         }
     }
 
-    public static String monthToNumber(String month) {
+    private String monthToNumber(String month) {
         return switch (month) {
             case "янв." -> "01";
             case "февр." -> "02";
@@ -115,15 +115,15 @@ public class TrackLogConverter implements Runnable {
 
     private String getOutFileName() {
         String month = this.fileName.split("-")[2];
-        String outputFileName;
+        String outFileName;
         if (!month.matches("\\d{2}")) {
             String monthNumber = monthToNumber(month);
-            outputFileName = fileName.replaceFirst(month, monthNumber);
+            outFileName = fileName.replaceFirst(month, monthNumber);
 
         } else {
-            outputFileName = this.fileName;
+            outFileName = this.fileName;
         }
-        return outDir + "/" + outputFileName;
+        return outDir + "/" + outFileName;
     }
 
     private void writeFile() throws IOException {
