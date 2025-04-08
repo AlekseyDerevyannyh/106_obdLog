@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -14,8 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    public static List<String> logs;
-    public static String header;
 
     public static void main(String[] args) throws IOException {
         String inDir;
@@ -38,7 +35,6 @@ public class Main {
             if (file.matches(trackLogRegex))
                 trackLogFiles.add(file);
         }
-//        System.out.println(Runtime.getRuntime().availableProcessors());
         File outDirectory = new File(outDir);
         if (!outDirectory.exists()) {
             boolean success = outDirectory.mkdirs();
@@ -48,14 +44,13 @@ public class Main {
             }
         }
 
-//        Thread thread = new Thread(new TrackLogConverter(trackLogFiles.poll(), inDir, outDir));
-//        thread.start();
-        ExecutorService executor = Executors.newWorkStealingPool();
+//        ExecutorService executor = Executors.newWorkStealingPool();
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         String fileName;
         while ((fileName = trackLogFiles.poll()) != null) {
             executor.execute(new TrackLogConverter(fileName, inDir, outDir));
         }
-//        executor.shutdown();
+        executor.shutdown();
     }
 
     public static Set<String> getFileNames(String dir) throws IOException {

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TrackLogConverter implements Runnable {
-    private String fileName;
-    private String inDir;
-    private String outDir;
+    private final String fileName;
+    private final String inDir;
+    private final String outDir;
     private String header;
     private List<String> lines = new ArrayList<>();
 
@@ -27,6 +27,7 @@ public class TrackLogConverter implements Runnable {
         try {
             readFile();
             removeHeaderFailLines();
+            removeFalseHeaders();
             removeLogWhenStop();
             replaceInvalid();
             replaceMonth();
@@ -70,9 +71,18 @@ public class TrackLogConverter implements Runnable {
         this.lines.removeIf(s -> s.chars().filter(c -> c == '-').count() > 4);
     }
 
+    private void removeFalseHeaders() {
+        lines.removeIf(line -> line.equals(header));
+    }
+
     private boolean isNormalVoltage(String line) {
         String[] values = line.split(",");
-        return Double.parseDouble(values[values.length - 1]) > 12.0;
+        try {
+            return Double.parseDouble(values[values.length - 1]) > 12.0;
+        } catch (NumberFormatException e) {
+            System.out.printf("NumberFormatException in file %s: %s\n", this.fileName, line);
+            throw new RuntimeException();
+        }
     }
 
     private void removeLogWhenStop() {
